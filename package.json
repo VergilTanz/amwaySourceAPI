@@ -1,0 +1,39 @@
+{
+  "name": "amwaysourceapi",
+  "version": "1.0.0",
+  "description": "use with google functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VergilTanz/amwaySourceAPI.git"
+  },
+  "author": "Vergil",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VergilTanz/amwaySourceAPI/issues"
+  },
+  "homepage": "https://github.com/VergilTanz/amwaySourceAPI#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {
+    "@google-cloud/debug-agent": "^7.0.0",
+    "@google-cloud/functions-framework": "^3.1.0",
+    "escape-html": "^1.0.3"
+  },
+  "devDependencies": {
+    "@google-cloud/pubsub": "^3.0.0",
+    "@google-cloud/storage": "^6.0.0",
+    "gaxios": "^4.3.2",
+    "mocha": "^9.0.0",
+    "moment": "^2.24.0",
+    "promise-retry": "^2.0.0",
+    "sinon": "^14.0.0",
+    "supertest": "^6.0.0",
+    "uuid": "^8.0.0",
+    "wait-port": "^0.3.0"
+  }
+}
