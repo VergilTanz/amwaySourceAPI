@@ -2,7 +2,6 @@ const functions = require('@google-cloud/functions-framework');
 const mysql = require('mysql')
 
 functions.http('helloHttp', (req, res) => {
-
     console.log('This is for helloHttp logging purpose')
     console.log('This is for helloHttp logging purpose')
     console.log('This is for helloHttp logging purpose')
@@ -24,16 +23,17 @@ functions.http('helloHttp', (req, res) => {
 
     if (req.method === 'OPTIONS') {
         // Send response to OPTIONS requests
-        res.set('Access-Control-Allow-Methods', 'GET');
-        res.set('Access-Control-Allow-Headers', 'Content-Type');
-        res.set('Access-Control-Max-Age', '3600');
-        res.status(204).send('Hello World with Options 2');
+        // res.set('Access-Control-Allow-Methods', 'GET');
+        // res.set('Access-Control-Allow-Headers', 'Content-Type');
+        // res.set('Access-Control-Max-Age', '3600');
+        // res.status(204).send('Hello World with Options 2');
     } else {
         if (req.body === undefined) {
-            res.send('Error : missing inputs');
+            res.send(JSON.stringify({
+                status: 'error',
+                data: 'missing inputs'
+            }));
         }
-
-
 
         const values = {
             productNumber: `${req.body.skuPrefix}${req.body.skuRoot}${req.body.skuSuffix}`,
@@ -48,37 +48,43 @@ functions.http('helloHttp', (req, res) => {
             productSubCategory: req.body.productSubCategory
         }
 
-        // error on purpose
-        pool.query(`select * from example where productNumber = 'AABBCCCDDEESS'`, (error, results) => {
-            console.log('error on purpose')
-            console.log(results)
-        })
-
-        // return error if product exist
-        pool.query(`select * from example where productNumber = '${values.productNumber}'`, (error, results) => {
-            if (results.length > 0) {
-                res.send(JSON.stringify(results));
-            }
-        })
-
-        const query = `INSERT INTO example
+        const query = `INSERT INTO Example
+        (productNumber, email, percentage, effectiveDate, productStatus, effectiveTime, userPassword, businessLine, productCategory, productSubCategory)
         VALUES (
             "${values.productNumber}",
             "${values.email}",
             "${values.percentage}",
-            "98-09-04",
+            "${values.effectiveDate}",
             "${values.productStatus}",
-            "22:33:44",
+            "${values.effectiveTime}",
             "${values.userPassword}",
             "${values.businessLine}",
             "${values.productCategory}",
             "${values.productSubCategory}")`
 
-        pool.query(query, (error, results) => {
-            console.log('inserting data...')
-            console.log(error)
-            console.log(results)
-            res.send('data insert successfully');
+        pool.query(`select * from Example where productNumber = '${values.productNumber}'`, (error, results) => {
+            if (results !== undefined && results.length > 0) {
+                res.send(JSON.stringify({
+                    status: 'duplicated',
+                    data: results
+                }));
+            } else {
+                pool.query(query, (error, results) => {
+                    console.log('inserting data...')
+                    console.log(error)
+                    if (error) {
+                        res.send(JSON.stringify({
+                            status: 'error',
+                            data: error
+                        }))
+                    } else {
+                        res.send(JSON.stringify({
+                            status: 'success',
+                            data: 'Data insert succesfully'
+                        }));
+                    }
+                })
+            }
         })
     }
 });
