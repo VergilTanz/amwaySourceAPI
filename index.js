@@ -1,7 +1,7 @@
 const functions = require('@google-cloud/functions-framework');
 const mysql = require('mysql')
 
-functions.http('helloHttp', (req, res) => {
+functions.http('insertExamples', (req, res) => {
     console.log('This is for helloHttp logging purpose')
     console.log('This is for helloHttp logging purpose')
     console.log('This is for helloHttp logging purpose')
@@ -21,13 +21,7 @@ functions.http('helloHttp', (req, res) => {
 
     res.set('Access-Control-Allow-Origin', '*')
 
-    if (req.method === 'OPTIONS') {
-        // Send response to OPTIONS requests
-        // res.set('Access-Control-Allow-Methods', 'GET');
-        // res.set('Access-Control-Allow-Headers', 'Content-Type');
-        // res.set('Access-Control-Max-Age', '3600');
-        // res.status(204).send('Hello World with Options 2');
-    } else {
+    if (req.method === 'OPTIONS') {} else {
         if (req.body === undefined) {
             res.send(JSON.stringify({
                 status: 'error',
@@ -45,11 +39,14 @@ functions.http('helloHttp', (req, res) => {
             userPassword: req.body.password,
             businessLine: req.body.businessLine,
             productCategory: req.body.productCategory,
-            productSubCategory: req.body.productSubCategory
+            productSubCategory: req.body.productSubCategory,
+            localPrice: req.body.localPrice,
+            tax: req.body.tax,
+            aboPriceLtax: req.body.aboPriceLtax
         }
 
         const query = `INSERT INTO Example
-        (productNumber, email, percentage, effectiveDate, productStatus, effectiveTime, userPassword, businessLine, productCategory, productSubCategory)
+        (productNumber, email, percentage, effectiveDate, productStatus, effectiveTime, userPassword, businessLine, productCategory, productSubCategory, localPrice, tax, aboPriceLtax)
         VALUES (
             "${values.productNumber}",
             "${values.email}",
@@ -60,7 +57,10 @@ functions.http('helloHttp', (req, res) => {
             "${values.userPassword}",
             "${values.businessLine}",
             "${values.productCategory}",
-            "${values.productSubCategory}")`
+            "${values.productSubCategory}",
+            "${values.localPrice}",
+            "${values.tax}",
+            "${values.aboPriceLtax}")`
 
         pool.query(`select * from Example where productNumber = '${values.productNumber}'`, (error, results) => {
             if (results !== undefined && results.length > 0) {
